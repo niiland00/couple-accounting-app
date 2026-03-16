@@ -6,6 +6,7 @@
 <link rel="stylesheet" href="/static/style.css">
 <link rel="manifest" href="/static/manifest.json">
 <meta name="theme-color" content="#ff6b81">
+<link rel="apple-touch-icon" href="/static/icon.png">
 </head>
 
 <body>
@@ -33,7 +34,8 @@
 if ("serviceWorker" in navigator) {
   // 注意：這裡改為指向我們在 app.py 設定的路由
   navigator.serviceWorker.register("/service-worker.js") 
-    .then(() => console.log("Service Worker Registered"));
+    .then(() => console.log("Service Worker Registered"))
+	.catch(err => console.log("Service Worker 註冊失敗", err));
 }
 </script>
 
