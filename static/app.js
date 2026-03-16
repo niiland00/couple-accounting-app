@@ -3,16 +3,19 @@ const API = "";
 // 頁面載入時：檢查是否有存過 ID
 window.onload = function() {
     const savedID = localStorage.getItem('coupleID');
-    if (savedID) {
-        showMainApp(savedID);
+    const savedCode = localStorage.getItem('coupleCode'); // 也要拿原本的文字暗號
+    if (savedID && savedCode) {
+        showMainApp(savedID, savedCode);
     }
 };
 
-// 切換 UI 顯示
-function showMainApp(id) {
+// 切換 UI 顯示 (修正：明確區分 ID 與 Code)
+function showMainApp(id, code) {
     document.getElementById('id-section').style.display = 'none';
     document.getElementById('main-app').style.display = 'block';
-    document.getElementById('display-id').innerText = id;
+    
+    // 顯示給人看的是文字 Code，背後跑的是數字 ID
+    document.getElementById('display-id').innerText = code;
     loadRecords();
 }
 
@@ -21,22 +24,24 @@ async function saveCoupleID() {
     const codeInput = document.getElementById('couple-id-input').value.trim();
     if (!codeInput) return alert("請輸入 ID");
 
-    // 呼叫新的 join_couple 路由
-    const response = await fetch("/join_couple", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ couple_code: codeInput })
-    });
+    try {
+        const response = await fetch("/join_couple", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ couple_code: codeInput })
+        });
 
-    const data = await response.json();
+        const data = await response.json();
 
-    if (data.couple_id) {
-        // 重要：這裏存入的是資料庫給的【數字 ID】，這樣 records 表才讀得到
-        localStorage.setItem('coupleID', data.couple_id); 
-        localStorage.setItem('coupleCode', data.couple_code); 
-        showMainApp(data.couple_id, data.couple_code);
-    } else {
-        alert("登入失敗：" + data.error);
+        if (data.couple_id) {
+            localStorage.setItem('coupleID', data.couple_id); 
+            localStorage.setItem('coupleCode', data.couple_code); 
+            showMainApp(data.couple_id, data.couple_code);
+        } else {
+            alert("登入失敗：" + (data.error || "未知錯誤"));
+        }
+    } catch (err) {
+        alert("連線伺服器失敗，請檢查網路");
     }
 }
 
@@ -44,6 +49,7 @@ async function saveCoupleID() {
 function resetID() {
     if(confirm("確定要更換 ID 嗎？")) {
         localStorage.removeItem('coupleID');
+        localStorage.removeItem('coupleCode');
         location.reload();
     }
 }
@@ -85,6 +91,7 @@ function addRecord(){
         document.getElementById("item").value = "";
 		document.getElementById("desc").value = "";
         document.getElementById("price").value = "";
+		document.getElementById("payer").value = "";
         loadRecords();
     })
     .catch(err => {
@@ -130,7 +137,7 @@ function renderUI(data) {
         const day = dateObj.getDate();
 
         // 這是你原本組合的句子
-        let mySentence = r.created_at + " | " + r.item + " | " + r.payer + "爸爸付了" + r.price + "元";
+        let mySentence = r.item + " | " + r.payer + "爸爸付了" + r.price + "元";
 
         // 建立漂亮的清單項目
         let li = document.createElement("li");
