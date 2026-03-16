@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Couple Accounting</title>
+<link rel="stylesheet" href="/static/style.css">
+<link rel="manifest" href="/static/manifest.json">
+<meta name="theme-color" content="#ff6b81">
+</head>
+
+<body>
+
+<h1></h1>
+
+<div>
+<input id="item" placeholder="項目">
+<input id="desc" placeholder="描述">
+<input id="price" placeholder="金額">
+<input id="payer" placeholder="爸爸">
+<input id="date" type="date">
+
+<button onclick="addRecord()">新增一筆</button>
+</div>
+
+<h2>記帳紀錄</h2>
+<input type="date" id="searchDate">
+<button onclick="search()">查詢</button>
+
+<ul id="records"></ul>
+
+<script src="/static/app.js"></script>
+<script>
+if ("serviceWorker" in navigator) {
+  // 注意：這裡改為指向我們在 app.py 設定的路由
+  navigator.serviceWorker.register("/service-worker.js") 
+    .then(() => console.log("Service Worker Registered"));
+}
+</script>
+
+</body>
+</html>
