@@ -212,3 +212,21 @@ button {
     gap: 10px;
     margin-bottom: 20px;
 }
+
+/* 月份切換器文字按鈕 */
+.month-seletor .text-btn {
+    text-decoration: none;
+    color: #FF8C00;
+    padding: 10px;
+}
+
+.month-seletor .text-btn:hover {
+    transform: scale(1.2);
+    color: #E65100;
+}
+
+/* 確保統計圖表容器大小適中 */
+#payerChart {
+    max-width: 100%;
+    margin: 0 auto;
+}
