@@ -9,31 +9,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="apple-touch-icon" href="/static/icon.png">
 </head>
-
 <body>
 
 <div class="container">
-        <h1></h1>
+    <h1>Couple Accounting</h1>
 
-		<div class="input-card">
+    <div id="id-section" class="input-card">
+        <h3>歡迎使用，請輸入你們的ID</h3>
+        <p style="font-size: 0.8rem; color: #888;">輸入專屬 ID 以同步彼此的紀錄</p>
+        <div class="input-group">
+            <input id="couple-id-input" placeholder="例如: SEANBABBY520">
+        </div>
+        <button class="primary-btn" onclick="saveCoupleID()">開始記帳</button>
+    </div>
+
+    <div id="main-app" style="display: none;">
+        <div class="status-bar">
+            <span>當前 ID: <strong id="display-id"></strong></span>
+            <button class="text-btn" onclick="resetID()">重設</button>
+        </div>
+
+        <div class="input-card">
             <div class="input-group">
                 <input id="item" placeholder="項目">
                 <input id="desc" placeholder="描述">
                 <input id="price" type="number" placeholder="金額">
-                <input id="payer" placeholder="付款人">
+                <input id="payer" placeholder="要叫誰爸爸">
                 <input id="date" type="date">
             </div>
             <button class="primary-btn" onclick="addRecord()">新增一筆</button>
         </div>
 
-		<div class="list-section">
-            <h2>記帳紀錄</h2>
-            <div class="search-bar">
-                <input type="date" id="searchDate">
-                <button class="secondary-btn" onclick="search()">查詢</button>
+        <div class="list-section">
+            <div class="list-header">
+                <h2>記帳紀錄</h2>
+                <div class="search-bar">
+                    <input type="date" id="searchDate">
+                    <button class="secondary-btn" onclick="search()">🔍</button>
+                </div>
             </div>
-            <ul id="records"></ul>
+            <div id="records" class="records-grid"></div>
         </div>
+    </div>
 </div>
 
 <script src="/static/app.js"></script>

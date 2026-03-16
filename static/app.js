@@ -1,12 +1,47 @@
 const API = "";
 
-function addRecord(){
+// 頁面載入時：檢查是否有存過 ID
+window.onload = function() {
+    const savedID = localStorage.getItem('coupleID');
+    if (savedID) {
+        showMainApp(savedID);
+    }
+};
 
+// 切換 UI 顯示
+function showMainApp(id) {
+    document.getElementById('id-section').style.display = 'none';
+    document.getElementById('main-app').style.display = 'block';
+    document.getElementById('display-id').innerText = id;
+    loadRecords();
+}
+
+// 儲存 ID
+function saveCoupleID() {
+    const idInput = document.getElementById('couple-id-input').value.trim();
+    if (!idInput) return alert("請輸入 ID");
+    localStorage.setItem('coupleID', idInput);
+    showMainApp(idInput);
+}
+
+// 重設 ID
+function resetID() {
+    if(confirm("確定要更換 ID 嗎？")) {
+        localStorage.removeItem('coupleID');
+        location.reload();
+    }
+}
+
+function addRecord(){
+	
+	const coupleId = localStorage.getItem('coupleID'); // 動取取得 ID
     let item = document.getElementById("item").value;
 	let desc = document.getElementById("desc").value;
 	let price = document.getElementById("price").value;
 	let payer = document.getElementById("payer").value;
 	let date = document.getElementById("date").value;
+	
+	if (!item || !price) return alert("項目與金額必填喔！");
 
     fetch(API + "/add_expense",{
         method:"POST",
@@ -14,7 +49,7 @@ function addRecord(){
             "Content-Type":"application/json"
         },
         body:JSON.stringify({
-            couple_id:1,
+            couple_id: coupleId,
 			item:item,
 			description:desc,
 			price:price,
@@ -32,6 +67,7 @@ function addRecord(){
         alert("記帳成功！");
         // 清空輸入框
         document.getElementById("item").value = "";
+		document.getElementById("desc").value = "";
         document.getElementById("price").value = "";
         loadRecords();
     })
@@ -42,55 +78,51 @@ function addRecord(){
 }
 
 function loadRecords(){
-
-    fetch(API + "/expenses/1")
+	const coupleId = localStorage.getItem('coupleID');
+    fetch(API + "/expenses/" + coupleId)
     .then(r=>r.json())
-    .then(data=>{
-
-        let list = document.getElementById("records");
-        list.innerHTML="";
-
-        data.forEach(r=>{
-
-            let li=document.createElement("li");
-            li.innerText =
-			r.created_at + " | " +
-			r.item + " | " +
-			r.payer + "爸爸付了" +
-			r.price + "元";
-			
-            list.appendChild(li);
-
-        });
-
+    .then(data => {
+        renderUI(data);
     });
-
 }
 
-function search(){
+        function search(){
+    let date = document.getElementById("searchDate").value;
+    if (!date) return loadRecords();
 
-let date = document.getElementById("searchDate").value;
-
-fetch(API + "/search/" + date)
-.then(r=>r.json())
-.then(data=>{
-
-let list = document.getElementById("records");
-list.innerHTML="";
-
-data.forEach(r=>{
-	let li=document.createElement("li");
-
-	li.innerText =
-		r.created_at + " | " +
-		r.item + " | " +
-		r.payer + "爸爸付了" +
-		r.price + "元";
-
-list.appendChild(li);
-});
-
-});
+    fetch(API + "/search/" + date)
+    .then(r => r.json())
+    .then(data => {
+        renderUI(data);
+    });
 }
 
-loadRecords();
+// 5. 核心渲染功能：保留你的句子 + 方塊排版
+function renderUI(data) {
+    let list = document.getElementById("records");
+    list.innerHTML = "";
+
+    data.forEach(r => {
+        // 拆解日期做小方塊
+        const dateObj = new Date(r.created_at);
+        const month = dateObj.getMonth() + 1;
+        const day = dateObj.getDate();
+
+        // 這是你原本組合的句子
+        let mySentence = r.created_at + " | " + r.item + " | " + r.payer + "爸爸付了" + r.price + "元";
+
+        // 建立漂亮的清單項目
+        let li = document.createElement("li");
+        li.className = "record-card"; // 套用我們漂亮的 CSS
+        li.innerHTML = `
+            <div class="date-badge">
+                <span class="month">${month}月</span>
+                <span class="day">${day}</span>
+            </div>
+            <div class="record-info">
+                <span class="record-text">${mySentence}</span>
+            </div>
+        `;
+        list.appendChild(li);
+    });
+}
