@@ -20,6 +20,7 @@ def get_db_connection():
         password=os.getenv("DB_PASS", "Zxcvxc1001##"),
         database=os.getenv("DB_NAME", "couple_accounting"),
         autocommit=True  # 自動提交，確保資料即時寫入
+        ssl_disabled=False if os.getenv("DB_HOST") else True
     )
 
 def generate_code():
