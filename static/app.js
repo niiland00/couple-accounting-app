@@ -17,11 +17,27 @@ function showMainApp(id) {
 }
 
 // 儲存 ID
-function saveCoupleID() {
-    const idInput = document.getElementById('couple-id-input').value.trim();
-    if (!idInput) return alert("請輸入 ID");
-    localStorage.setItem('coupleID', idInput);
-    showMainApp(idInput);
+async function saveCoupleID() {
+    const codeInput = document.getElementById('couple-id-input').value.trim();
+    if (!codeInput) return alert("請輸入 ID");
+
+    // 呼叫新的 join_couple 路由
+    const response = await fetch("/join_couple", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ couple_code: codeInput })
+    });
+
+    const data = await response.json();
+
+    if (data.couple_id) {
+        // 重要：這裏存入的是資料庫給的【數字 ID】，這樣 records 表才讀得到
+        localStorage.setItem('coupleID', data.couple_id); 
+        localStorage.setItem('coupleCode', data.couple_code); 
+        showMainApp(data.couple_id, data.couple_code);
+    } else {
+        alert("登入失敗：" + data.error);
+    }
 }
 
 // 重設 ID

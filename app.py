@@ -38,19 +38,31 @@ def service_worker():
 
 # --- API 路由 ---
 
-@app.route("/create_couple", methods=["POST"])
-def create_couple():
-    code = generate_code()
+@app.route("/join_couple", methods=["POST"])
+def join_couple():
+    data = request.json
+    code = data.get("couple_code", "").strip().upper() # 轉大寫一致化
+    
+    if not code:
+        return jsonify({"error": "請輸入暗號"}), 400
+
     db = get_db_connection()
     cursor = db.cursor(dictionary=True)
     try:
-        cursor.execute(
-            "INSERT INTO couples (couple_code) VALUES (%s)",
-            (code,)
-        )
-        return jsonify({"couple_code": code})
+        # 1. 先查看看這個暗號存不存在
+        cursor.execute("SELECT id FROM couples WHERE couple_code=%s", (code,))
+        result = cursor.fetchone()
+        
+        if result:
+            # 如果存在，回傳現有的整數 ID
+            return jsonify({"couple_id": result["id"], "couple_code": code})
+        else:
+            # 2. 如果不存在，就幫他新增一個
+            cursor.execute("INSERT INTO couples (couple_code) VALUES (%s)", (code,))
+            return jsonify({"couple_id": cursor.lastrowid, "couple_code": code})
+            
     except Exception as e:
-        return jsonify({"error": str(e)})
+        return jsonify({"error": str(e)}), 500
     finally:
         cursor.close()
         db.close()
@@ -103,19 +115,18 @@ def expenses(couple_id):
         cursor.close()
         db.close()
 
-@app.route("/search/<date>")
-def search(date):
+@app.route("/search/<couple_id>/<date>")
+def search(couple_id, date):
     db = get_db_connection()
     cursor = db.cursor(dictionary=True)
     try:
-        cursor.execute("SELECT * FROM records WHERE created_at=%s", (date,))
+        # 加入 couple_id 條件，才不會看到別人的紀錄
+        cursor.execute("SELECT * FROM records WHERE couple_id=%s AND created_at=%s", (couple_id, date))
         result = cursor.fetchall()
         for row in result:
             if row['created_at']:
                 row['created_at'] = str(row['created_at'])
         return jsonify(result)
-    except Exception as e:
-        return jsonify({"error": str(e)})
     finally:
         cursor.close()
         db.close()
