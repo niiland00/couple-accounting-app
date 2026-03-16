@@ -102,15 +102,20 @@ function loadRecords(){
     });
 }
 
-        function search(){
+function search() {
+    const coupleId = localStorage.getItem('coupleID'); // 取得當前帳號數字 ID
     let date = document.getElementById("searchDate").value;
+    
+    // 如果沒選日期就點搜尋，就載入全部紀錄
     if (!date) return loadRecords();
 
-    fetch(API + "/search/" + date)
+    // 注意：這裡的路徑要加上 coupleId
+    fetch(API + "/search/" + coupleId + "/" + date)
     .then(r => r.json())
     .then(data => {
-        renderUI(data);
-    });
+        renderUI(data); // 使用統一的渲染函數
+    })
+    .catch(err => console.error("搜尋發生錯誤:", err));
 }
 
 // 5. 核心渲染功能：保留你的句子 + 方塊排版

@@ -102,26 +102,35 @@ def expenses(couple_id):
     db = get_db_connection()
     cursor = db.cursor(dictionary=True)
     try:
-        cursor.execute("SELECT * FROM records WHERE couple_id=%s ORDER BY created_at DESC", (couple_id,))
+        # 加上 ORDER BY created_at DESC (由新到舊)
+        # 如果你想由舊到新，就改成 ASC
+        cursor.execute("""
+            SELECT * FROM records 
+            WHERE couple_id=%s 
+            ORDER BY created_at DESC, id DESC
+        """, (couple_id,))
+        
         result = cursor.fetchall()
-        # 轉換日期格式為字串，避免 JSON 序列化失敗
         for row in result:
             if row['created_at']:
                 row['created_at'] = str(row['created_at'])
         return jsonify(result)
-    except Exception as e:
-        return jsonify({"error": str(e)})
     finally:
         cursor.close()
         db.close()
 
-@app.route("/search/<couple_id>/<date>")
+@app.route("/search/<couple_id>/<date>") # 這裡改為接收兩個參數
 def search(couple_id, date):
     db = get_db_connection()
     cursor = db.cursor(dictionary=True)
     try:
-        # 加入 couple_id 條件，才不會看到別人的紀錄
-        cursor.execute("SELECT * FROM records WHERE couple_id=%s AND created_at=%s", (couple_id, date))
+        # 關鍵：必須同時檢查 couple_id 和 date，才不會搜到別人的資料
+        cursor.execute("""
+            SELECT * FROM records 
+            WHERE couple_id=%s AND created_at=%s 
+            ORDER BY id DESC
+        """, (couple_id, date))
+        
         result = cursor.fetchall()
         for row in result:
             if row['created_at']:
