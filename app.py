@@ -12,16 +12,26 @@ CORS(app)
 
 # --- 資料庫連線設定 ---
 def get_db_connection():
-    # 優先讀取雲端環境變數，若無則使用本地預設值
-    return mysql.connector.connect(
-        host=os.getenv("DB_HOST", "localhost"),
-        port=int(os.getenv("DB_PORT", 3306)),
-        user=os.getenv("DB_USER", "root"),
-        password=os.getenv("DB_PASS", "Zxcvxc1001##"),
-        database=os.getenv("DB_NAME", "couple_accounting"),
-        autocommit=True,  # 自動提交，確保資料即時寫入
-        ssl_disabled=False if os.getenv("DB_HOST") else True,
-    )
+    try:
+        # 優先讀取雲端環境變數
+        conn = mysql.connector.connect(
+            host=os.getenv("DB_HOST", "localhost"),
+            port=int(os.getenv("DB_PORT", 3306)),
+            user=os.getenv("DB_USER", "root"),
+            password=os.getenv("DB_PASS", "Zxcvxc1001##"),
+            database=os.getenv("DB_NAME", "couple_accounting"),
+            autocommit=True,
+            ssl_disabled=False if os.getenv("DB_HOST") else True,
+            connect_timeout=10 # 設定連線逾時，避免卡死
+        )
+        return conn
+    except mysql.connector.Error as err:
+        # 這裡會在雲端 Log 噴出具體錯誤原因（例如：Access denied...）
+        print(f"資料庫連線失敗！具體原因: {err}")
+        return None
+    except Exception as e:
+        print(f"發生未知錯誤: {e}")
+        return None
 
 def generate_code():
     return ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
@@ -145,8 +155,13 @@ def search(couple_id, date):
         db.close()
 
 if __name__ == "__main__":
-    # 部署到雲端時，雲端會自動給 port，本地則維持 8000
-    app_port = int(os.environ.get("PORT", 8000))
-    print(f"App is starting on port {app_port}...")
+    # 這裡不要寫死 8000，一定要先抓環境變數
+    # 某些雲端平台如果抓不到 PORT 會報錯，所以我們給它一個預設值 8000
+    port_str = os.environ.get("PORT", "8000")
+    port = int(port_str)
     
-    app.run(host="0.0.0.0", port=port)
+    print(f"正在啟動程式，監聽 Port: {port}")
+    
+    # host 必須是 0.0.0.0
+    # debug 建議在雲端環境設為 False
+    app.run(host="0.0.0.0", port=port, debug=False)
