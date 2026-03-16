@@ -132,10 +132,14 @@ def search(couple_id, date):
         """, (couple_id, date))
         
         result = cursor.fetchall()
+        
         for row in result:
             if row['created_at']:
                 row['created_at'] = str(row['created_at'])
         return jsonify(result)
+    except Exception as e:
+        print("搜尋 SQL 錯誤:", e) # 在 Logs 裡看這個
+        return jsonify({"error": str(e)})
     finally:
         cursor.close()
         db.close()

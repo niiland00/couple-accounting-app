@@ -2,10 +2,9 @@
 body {
     font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
     /* 1. 設定漸層底色 (防止圖片沒載入時一片白) */
-    background-color: #fceef0; 
+    background-color: ##FF8C00; 
     
     /* 2. 設定你的 PNG 背景圖 */
-    /* 請將你的 PNG 檔放入 static 資料夾，並在此修改檔名 */
     background-image: url('/static/background.png'); 
     
     /* 3. 設定圖片重複 (這就是你要的效果) */
@@ -20,7 +19,7 @@ body {
     display: flex;
     justify-content: center;
     min-height: 100vh;
-    color: #4a4a4a;
+    color: #333333;
 }
 
 .container {
@@ -30,7 +29,7 @@ body {
 
 h1 {
     text-align: center;
-    color: #ff6b81;
+    color: #FF7F50;
     text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
     margin-bottom: 30px;
 }
@@ -41,7 +40,7 @@ h1 {
     backdrop-filter: blur(10px);
     border-radius: 20px;
     padding: 20px;
-    box-shadow: 0 8px 32px rgba(255, 107, 129, 0.15);
+    box-shadow: 0 8px 32px rgba(230, 81, 0, 0.15);
     margin-bottom: 20px;
     border: 1px solid rgba(255, 255, 255, 0.5);
 }
@@ -64,8 +63,8 @@ input {
 }
 
 input:focus {
-    border-color: #ff6b81;
-    box-shadow: 0 0 5px rgba(255, 107, 129, 0.3);
+    border-color: #FF8C00;
+    box-shadow: 0 0 5px rgba(255, 140, 0, 0.3);
 }
 
 /* 按鈕樣式 */
@@ -78,7 +77,7 @@ button {
 
 .primary-btn {
     width: 100%;
-    background: #ff6b81;
+    background: #FF8C00; /* 主按鈕深橘 */
     color: white;
     padding: 14px;
     border-radius: 12px;
@@ -86,7 +85,7 @@ button {
 }
 
 .primary-btn:hover {
-    background: #ff4757;
+    background: #E65100; /* 滑過時變深焦橘 */
     transform: translateY(-2px);
 }
 
@@ -160,7 +159,7 @@ h2 {
     background: white;
     border-radius: 18px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-    border-left: 6px solid #ff6b81; /* 側邊色條 */
+    border-left: 6px solid #FF8C00;
     overflow: hidden; /* 確保展開動畫不會破相 */
     transition: box-shadow 0.3s ease;
 }
@@ -180,8 +179,8 @@ h2 {
 
 /* 日期小方塊 (保持原樣) */
 .date-badge {
-    background: #fff0f2;
-    color: #ff6b81;
+    background: #FFF5EE; /* 溫柔的杏色背景 */
+    color: #FF8C00;      /* 數字用橘色 */
     min-width: 55px;
     height: 55px;
     border-radius: 12px;
@@ -212,7 +211,7 @@ h2 {
 .record-price {
     font-size: 1.2rem;
     font-weight: 800;
-    color: #ff4757; /* 金額顯眼色 */
+    color: #E65100; /* 金額用最深、最明顯的橘 */
 }
 
 /* 展開箭頭 */
@@ -254,7 +253,7 @@ h2 {
     margin: 8px 0;
     font-size: 0.95rem;
     line-height: 1.6;
-    color: #666;
+    color: #FF7F50; /* 展開後的標籤顏色 */
 }
 .details-content p strong {
     color: #ff6b81; /* 強調標籤顏色 */
