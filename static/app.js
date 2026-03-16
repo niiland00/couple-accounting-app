@@ -134,18 +134,29 @@ function renderUI(data) {
     list.innerHTML = "";
 
     data.forEach((r, index) => {
+        // 解析日期供小方塊使用
+        const dateParts = r.created_at.split("-");
+        const month = parseInt(dateParts[1]);
+        const day = parseInt(dateParts[2]);
+
         // 建立清單項目
-        let li = document.createElement("li");
-        li.className = "record-card"; // 依然套用橘色卡片樣式
-        li.style.padding = "15px";    // 確保文字有呼吸空間
+        let li = document.createElement("div");
+        li.className = "record-card"; 
         li.onclick = () => showDetail(index); 
 
-        // 這裡完全保留你組合的句子
-        let mySentence = r.created_at + " | " + r.item + " | " + r.payer + "爸爸付了" + r.price + "元";
+        let mySentence = r.item + " | " + r.payer + "爸爸付了" + r.price + "元";
 
         li.innerHTML = `
-            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                <span class="record-text" style="font-size: 0.95rem; color: #444;">${mySentence}</span>
+            <div class="card-header">
+                <div class="date-badge">
+                    <span class="month">${month}月</span>
+                    <span class="day">${day}</span>
+                </div>
+                <div class="header-info">
+                    <span class="record-text" style="font-size: 0.95rem; color: #444; line-height: 1.4;">
+                        ${mySentence}
+                    </span>
+                </div>
                 <span class="arrow-icon">❯</span>
             </div>
         `;
@@ -160,19 +171,21 @@ function showDetail(index) {
     const detailView = document.getElementById("detail-view");
     const detailContent = document.getElementById("detail-content");
 
-    // 這裡修改為只顯示描述
+    // 清空並填入僅含描述的內容
     detailContent.innerHTML = `
         <div class="details-content">
-            <h3 style="color: #FF8C00; margin-top: 0;">項目描述</h3>
-            <p style="background: #FFF5EE; padding: 15px; border-radius: 12px; border: 1px dashed #FF8C00; color: #333; min-height: 100px; line-height: 1.6;">
-                ${r.description || '（沒有填寫描述喔！）'}
-            </p>
-            <p style="font-size: 0.8rem; color: #999; text-align: right; margin-top: 10px;">
-                紀錄日期：${r.created_at}
-            </p>
+            <div style="background: #FFF5EE; padding: 20px; border-radius: 15px; border: 1px dashed #FF8C00; color: #333; min-height: 120px; line-height: 1.6; font-size: 1.05rem;">
+                ${r.description || '（這筆紀錄沒有填寫描述喔！）'}
+            </div>
+            
+            <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee; font-size: 0.85rem; color: #999;">
+                <p>項目名稱：${r.item}</p>
+                <p>紀錄時間：${r.created_at}</p>
+            </div>
         </div>
     `;
 
+    // 切換區域顯示
     listView.style.display = "none";
     detailView.style.display = "block";
 }
