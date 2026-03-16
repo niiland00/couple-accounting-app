@@ -1,6 +1,10 @@
 body{
     font-family: Arial;
     padding:40px;
+	background-color: white !important;
+    color: black !important;
+    min-height: 100vh;
+    display: block !important;
 }
 
 input{
