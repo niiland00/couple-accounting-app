@@ -125,32 +125,60 @@ function search() {
     .catch(err => console.error("搜尋發生錯誤:", err));
 }
 
-// 5. 核心渲染功能：保留你的句子 + 方塊排版
+// --- 核心渲染功能：升級為可展開式卡片 ---
 function renderUI(data) {
     let list = document.getElementById("records");
+    if (!list) return;
     list.innerHTML = "";
 
     data.forEach(r => {
-        // 拆解日期做小方塊
-        const dateObj = new Date(r.created_at);
-        const month = dateObj.getMonth() + 1;
-        const day = dateObj.getDate();
+        // 解析日期
+        const dateParts = r.created_at.split("-");
+        const month = parseInt(dateParts[1]);
+        const day = parseInt(dateParts[2]);
 
-        // 這是你原本組合的句子
-        let mySentence = r.item + " | " + r.payer + "爸爸付了" + r.price + "元";
-
-        // 建立漂亮的清單項目
+        // 建立清單項目 (li)
         let li = document.createElement("li");
-        li.className = "record-card"; // 套用我們漂亮的 CSS
+        li.className = "record-card"; // 依然套用卡片樣式
+
+        // 生成卡片的 HTML 結構
         li.innerHTML = `
-            <div class="date-badge">
-                <span class="month">${month}月</span>
-                <span class="day">${day}</span>
-            </div>
-            <div class="record-info">
-                <span class="record-text">${mySentence}</span>
+            <div class="card-header" onclick="toggleDetails(this)">
+                <div class="date-badge">
+                    <span class="month">${month}月</span>
+                    <span class="day">${day}</span>
+                </div>
+                <div class="header-info">
+                    <span class="record-item">${r.item}</span>
+                    <span class="record-price">$${r.price}</span>
+                </div>
+                <span class="arrow-icon">▼</span> </div>
+
+            <div class="card-details">
+                <div class="details-content">
+                    <p><strong>描述：</strong>${r.description || '（無描述）'}</p>
+                    <p><strong>付款人：</strong>${r.payer}爸爸</p>
+                </div>
             </div>
         `;
         list.appendChild(li);
     });
+}
+
+// --- 控制細項展開/折疊的函數 ---
+function toggleDetails(headerElement) {
+    // 找到這張卡片內的 .card-details 區塊
+    const card = headerElement.parentElement;
+    const details = card.querySelector('.card-details');
+    const arrow = headerElement.querySelector('.arrow-icon');
+
+    // 切換 'active' 類別
+    const isActive = details.classList.toggle('active');
+    
+    // 旋轉箭頭
+    if (isActive) {
+        arrow.style.transform = 'rotate(180deg)';
+    } else {
+        arrow.style.transform = 'rotate(0deg)';
+    }
 }

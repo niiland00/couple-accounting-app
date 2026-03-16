@@ -1,7 +1,20 @@
 /* 全域設定 */
 body {
     font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
-    background: linear-gradient(135deg, #fceef0 0%, #ffccd5 100%);
+    /* 1. 設定漸層底色 (防止圖片沒載入時一片白) */
+    background-color: #fceef0; 
+    
+    /* 2. 設定你的 PNG 背景圖 */
+    /* 請將你的 PNG 檔放入 static 資料夾，並在此修改檔名 */
+    background-image: url('/static/background.png'); 
+    
+    /* 3. 設定圖片重複 (這就是你要的效果) */
+    background-repeat: repeat; 
+    
+    /* 4. 其他背景設定 */
+    background-attachment: fixed; /* 讓背景固定，不隨頁面捲動 */
+    background-size: auto; /* 保持圖片原始大小進行重複 */
+    
     margin: 0;
     padding: 20px;
     display: flex;
@@ -138,51 +151,112 @@ h2 {
 
 /* 紀錄網格系統 */
 .records-grid {
-    display: grid;
-    grid-template-columns: 1fr; /* 手機上一排一個，電腦可改 1fr 1fr */
-    gap: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* 卡片之間的間距 */
 }
 
 .record-card {
-    display: flex;
-    align-items: center;
     background: white;
-    margin-bottom: 12px;
-    padding: 10px 15px;
-    border-radius: 15px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-    border-left: 5px solid #ff6b81; /* 側邊亮點色線 */
+    border-radius: 18px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    border-left: 6px solid #ff6b81; /* 側邊色條 */
+    overflow: hidden; /* 確保展開動畫不會破相 */
+    transition: box-shadow 0.3s ease;
 }
 
-/* 日期小方塊 */
+.record-card:hover {
+    box-shadow: 0 8px 25px rgba(255, 107, 129, 0.1);
+}
+
+/* --- 卡片標題排 --- */
+.card-header {
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    cursor: pointer; /* 游標變成手指 */
+    user-select: none; /* 防止滑鼠連點導致選取文字 */
+}
+
+/* 日期小方塊 (保持原樣) */
 .date-badge {
     background: #fff0f2;
     color: #ff6b81;
-    min-width: 50px;
-    height: 50px;
-    border-radius: 10px;
+    min-width: 55px;
+    height: 55px;
+    border-radius: 12px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin-right: 15px; /* 與文字的間距 */
+    margin-right: 18px;
     font-weight: bold;
-    flex-shrink: 0; /* 防止小方塊被文字擠扁 */
+    flex-shrink: 0;
 }
+.date-badge .month { font-size: 0.75rem; }
+.date-badge .day { font-size: 1.3rem; }
 
-.date-badge .month { font-size: 0.7rem; }
-.date-badge .day { font-size: 1.2rem; }
-
-/* 紀錄文字區塊 */
-.record-info {
+/* 標題資訊 (項目與金額) */
+.header-info {
     flex-grow: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-right: 15px;
+}
+.record-item {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+}
+.record-price {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #ff4757; /* 金額顯眼色 */
 }
 
-/* 這是針對你那串「日期 | 項目 | 爸爸付了元」的專屬樣式 */
-.record-text {
+/* 展開箭頭 */
+.arrow-icon {
+    color: #aaa;
+    font-size: 0.8rem;
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+}
+
+/* --- 卡片細項排 (核心動畫邏輯) --- */
+.card-details {
+    /* 1. 預設隱藏：高度為 0 */
+    max-height: 0; 
+    
+    /* 2. 設定平滑過場動畫 */
+    transition: max-height 0.4s ease-out, padding 0.4s ease-out;
+    
+    /* 3. 隱藏超出範圍的內容 */
+    overflow: hidden; 
+    
+    background-color: #fafafa; /* 細項背景色稍微加深以示區別 */
+    padding: 0 20px; /* 左右內距保持一致，上下內距設為 0 */
+}
+
+/* 當卡片被激活 (展開) 時的樣式 */
+.card-details.active {
+    /* 1. 設定一個足夠大的 max-height，讓內容能完整顯示 */
+    /* 關鍵：利用 max-height 做動畫，比直接改 height 順暢 */
+    max-height: 300px; 
+    
+    /* 2. 加入上下內距 */
+    padding: 15px 20px; 
+    border-top: 1px solid #eee; /* 加一條淡淡的分隔線 */
+}
+
+/* 細項文字內容 */
+.details-content p {
+    margin: 8px 0;
     font-size: 0.95rem;
-    color: #4a4a4a;
-    font-weight: 500;
-    line-height: 1.4;
-    word-break: break-all; /* 避免長文字超出範圍 */
+    line-height: 1.6;
+    color: #666;
+}
+.details-content p strong {
+    color: #ff6b81; /* 強調標籤顏色 */
+    margin-right: 5px;
 }
