@@ -1,33 +1,40 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Couple Accounting</title>
-<link rel="stylesheet" href="/static/style.css">
-<link rel="manifest" href="/static/manifest.json">
-<meta name="theme-color" content="#ff6b81">
-<link rel="apple-touch-icon" href="/static/icon.png">
+    <meta charset="UTF-8">
+    <title>Couple Accounting</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="manifest" href="/static/manifest.json">
+    <meta name="theme-color" content="#ff6b81">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="apple-touch-icon" href="/static/icon.png">
 </head>
 
 <body>
 
-<h1></h1>
+<div class="container">
+        <h1></h1>
 
-<div>
-<input id="item" placeholder="項目">
-<input id="desc" placeholder="描述">
-<input id="price" placeholder="金額">
-<input id="payer" placeholder="爸爸">
-<input id="date" type="date">
+		<div class="input-card">
+            <div class="input-group">
+                <input id="item" placeholder="項目">
+                <input id="desc" placeholder="描述">
+                <input id="price" type="number" placeholder="金額">
+                <input id="payer" placeholder="付款人">
+                <input id="date" type="date">
+            </div>
+            <button class="primary-btn" onclick="addRecord()">新增一筆</button>
+        </div>
 
-<button onclick="addRecord()">新增一筆</button>
+		<div class="list-section">
+            <h2>記帳紀錄</h2>
+            <div class="search-bar">
+                <input type="date" id="searchDate">
+                <button class="secondary-btn" onclick="search()">查詢</button>
+            </div>
+            <ul id="records"></ul>
+        </div>
 </div>
-
-<h2>記帳紀錄</h2>
-<input type="date" id="searchDate">
-<button onclick="search()">查詢</button>
-
-<ul id="records"></ul>
 
 <script src="/static/app.js"></script>
 <script>
