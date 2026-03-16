@@ -55,15 +55,14 @@ function resetID() {
 }
 
 function addRecord(){
-	
-	const coupleId = localStorage.getItem('coupleID'); // 動取取得 ID
+    const coupleId = localStorage.getItem('coupleID'); // 動取取得 ID
     let item = document.getElementById("item").value;
-	let desc = document.getElementById("desc").value;
-	let price = document.getElementById("price").value;
-	let payer = document.getElementById("payer").value;
-	let date = document.getElementById("date").value;
-	
-	if (!item || !price) return alert("項目與金額必填喔！");
+    let desc = document.getElementById("desc").value;
+    let price = document.getElementById("price").value;
+    let payer = document.getElementById("payer").value;
+    let date = document.getElementById("date").value;
+    
+    if (!item || !price || !date) return alert("項目、金額與日期均為必填喔！");
 
     fetch(API + "/add_expense",{
         method:"POST",
@@ -72,11 +71,11 @@ function addRecord(){
         },
         body:JSON.stringify({
             couple_id: coupleId,
-			item:item,
-			description:desc,
-			price:price,
-			payer:payer,
-			date:date
+            item:item,
+            description:desc,
+            price:price,
+            payer:payer,
+            date:date
         })
     })
     .then(async r => {
@@ -89,9 +88,9 @@ function addRecord(){
         alert("記帳成功！");
         // 清空輸入框
         document.getElementById("item").value = "";
-		document.getElementById("desc").value = "";
+        document.getElementById("desc").value = "";
         document.getElementById("price").value = "";
-		document.getElementById("payer").value = "";
+        document.getElementById("payer").value = "";
         loadRecords();
     })
     .catch(err => {
@@ -100,50 +99,51 @@ function addRecord(){
     });
 }
 
+// 全域變數，暫存紀錄以利詳細頁面顯示
+let currentRecords = [];
+
 function loadRecords(){
-	const coupleId = localStorage.getItem('coupleID');
+    const coupleId = localStorage.getItem('coupleID');
     fetch(API + "/expenses/" + coupleId)
     .then(r=>r.json())
     .then(data => {
+        currentRecords = data;
         renderUI(data);
     });
 }
 
 function search() {
-    const coupleId = localStorage.getItem('coupleID'); // 取得當前帳號數字 ID
+    const coupleId = localStorage.getItem('coupleID');
     let date = document.getElementById("searchDate").value;
     
-    // 如果沒選日期就點搜尋，就載入全部紀錄
     if (!date) return loadRecords();
 
-    // 注意：這裡的路徑要加上 coupleId
     fetch(API + "/search/" + coupleId + "/" + date)
     .then(r => r.json())
     .then(data => {
-        renderUI(data); // 使用統一的渲染函數
+        currentRecords = data;
+        renderUI(data); 
     })
     .catch(err => console.error("搜尋發生錯誤:", err));
 }
 
-// --- 核心渲染功能：升級為可展開式卡片 ---
+// --- 核心渲染功能：改為點擊切換區域顯示 ---
 function renderUI(data) {
     let list = document.getElementById("records");
     if (!list) return;
     list.innerHTML = "";
 
-    data.forEach(r => {
-        // 解析日期
+    data.forEach((r, index) => {
         const dateParts = r.created_at.split("-");
         const month = parseInt(dateParts[1]);
         const day = parseInt(dateParts[2]);
 
-        // 建立清單項目 (li)
-        let li = document.createElement("li");
-        li.className = "record-card"; // 依然套用卡片樣式
+        let li = document.createElement("div");
+        li.className = "record-card"; 
+        li.onclick = () => showDetail(index); // 點擊觸發詳細頁面
 
-        // 生成卡片的 HTML 結構
         li.innerHTML = `
-            <div class="card-header" onclick="toggleDetails(this)">
+            <div class="card-header">
                 <div class="date-badge">
                     <span class="month">${month}月</span>
                     <span class="day">${day}</span>
@@ -152,33 +152,40 @@ function renderUI(data) {
                     <span class="record-item">${r.item}</span>
                     <span class="record-price">$${r.price}</span>
                 </div>
-                <span class="arrow-icon">▼</span> </div>
-
-            <div class="card-details">
-                <div class="details-content">
-                    <p><strong>描述：</strong>${r.description || '（無描述）'}</p>
-                    <p><strong>付款人：</strong>${r.payer}爸爸</p>
-                </div>
+                <span class="arrow-icon">❯</span>
             </div>
         `;
         list.appendChild(li);
     });
 }
 
-// --- 控制細項展開/折疊的函數 ---
-function toggleDetails(headerElement) {
-    // 找到這張卡片內的 .card-details 區塊
-    const card = headerElement.parentElement;
-    const details = card.querySelector('.card-details');
-    const arrow = headerElement.querySelector('.arrow-icon');
+// --- 跳轉詳細資訊功能 ---
+function showDetail(index) {
+    const r = currentRecords[index];
+    const listView = document.getElementById("list-view");
+    const detailView = document.getElementById("detail-view");
+    const detailContent = document.getElementById("detail-content");
 
-    // 切換 'active' 類別
-    const isActive = details.classList.toggle('active');
-    
-    // 旋轉箭頭
-    if (isActive) {
-        arrow.style.transform = 'rotate(180deg)';
-    } else {
-        arrow.style.transform = 'rotate(0deg)';
-    }
+    detailContent.innerHTML = `
+        <div class="details-content">
+            <p><strong>日期：</strong> ${r.created_at}</p>
+            <p><strong>項目：</strong> ${r.item}</p>
+            <p><strong>金額：</strong> <span style="color: #E65100; font-weight: bold;">$${r.price}</span></p>
+            <p><strong>付款人：</strong> ${r.payer}爸爸</p>
+            <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
+            <p><strong>描述/備註：</strong></p>
+            <p style="background: #fdfdfd; padding: 10px; border-radius: 8px; border: 1px dashed #ddd;">
+                ${r.description || '無描述'}
+            </p>
+        </div>
+    `;
+
+    listView.style.display = "none";
+    detailView.style.display = "block";
+}
+
+// --- 返回列表功能 ---
+function backToList() {
+    document.getElementById("list-view").style.display = "block";
+    document.getElementById("detail-view").style.display = "none";
 }

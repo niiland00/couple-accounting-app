@@ -41,25 +41,38 @@
         </div>
 
         <div class="list-section">
-            <div class="list-header">
-                <h2>記帳紀錄</h2>
-                <div class="search-bar">
-                    <input type="date" id="searchDate">
-                    <button class="secondary-btn" onclick="search()">🔍</button>
+            <div id="list-view">
+                <div class="list-header">
+                    <h2>記帳紀錄</h2>
+                    <div class="search-bar">
+                        <input type="date" id="searchDate">
+                        <button class="secondary-btn" onclick="search()">🔍</button>
+                    </div>
                 </div>
+                <div id="records" class="records-grid"></div>
             </div>
-            <div id="records" class="records-grid"></div>
+
+            <div id="detail-view" style="display: none;">
+                <div class="list-header">
+                    <button class="text-btn" onclick="backToList()" style="color: #FF8C00; font-size: 1rem; font-weight: bold;">← 返回列表</button>
+                    <h2>詳細資訊</h2>
+                </div>
+                <div id="detail-content" class="record-card" style="background: white; cursor: default; display: block;">
+                    </div>
+            </div>
         </div>
     </div>
 </div>
 
 <script src="/static/app.js"></script>
 <script>
+// 預設日期為今天
+document.getElementById('date').valueAsDate = new Date();
+
 if ("serviceWorker" in navigator) {
-  // 注意：這裡改為指向我們在 app.py 設定的路由
   navigator.serviceWorker.register("/service-worker.js") 
     .then(() => console.log("Service Worker Registered"))
-	.catch(err => console.log("Service Worker 註冊失敗", err));
+    .catch(err => console.log("Service Worker 註冊失敗", err));
 }
 </script>
 
