@@ -134,24 +134,18 @@ function renderUI(data) {
     list.innerHTML = "";
 
     data.forEach((r, index) => {
-        const dateParts = r.created_at.split("-");
-        const month = parseInt(dateParts[1]);
-        const day = parseInt(dateParts[2]);
+        // 建立清單項目
+        let li = document.createElement("li");
+        li.className = "record-card"; // 依然套用橘色卡片樣式
+        li.style.padding = "15px";    // 確保文字有呼吸空間
+        li.onclick = () => showDetail(index); 
 
-        let li = document.createElement("div");
-        li.className = "record-card"; 
-        li.onclick = () => showDetail(index); // 點擊觸發詳細頁面
+        // 這裡完全保留你組合的句子
+        let mySentence = r.created_at + " | " + r.item + " | " + r.payer + "爸爸付了" + r.price + "元";
 
         li.innerHTML = `
-            <div class="card-header">
-                <div class="date-badge">
-                    <span class="month">${month}月</span>
-                    <span class="day">${day}</span>
-                </div>
-                <div class="header-info">
-                    <span class="record-item">${r.item}</span>
-                    <span class="record-price">$${r.price}</span>
-                </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <span class="record-text" style="font-size: 0.95rem; color: #444;">${mySentence}</span>
                 <span class="arrow-icon">❯</span>
             </div>
         `;
@@ -166,16 +160,15 @@ function showDetail(index) {
     const detailView = document.getElementById("detail-view");
     const detailContent = document.getElementById("detail-content");
 
+    // 這裡修改為只顯示描述
     detailContent.innerHTML = `
         <div class="details-content">
-            <p><strong>日期：</strong> ${r.created_at}</p>
-            <p><strong>項目：</strong> ${r.item}</p>
-            <p><strong>金額：</strong> <span style="color: #E65100; font-weight: bold;">$${r.price}</span></p>
-            <p><strong>付款人：</strong> ${r.payer}爸爸</p>
-            <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
-            <p><strong>描述/備註：</strong></p>
-            <p style="background: #fdfdfd; padding: 10px; border-radius: 8px; border: 1px dashed #ddd;">
-                ${r.description || '無描述'}
+            <h3 style="color: #FF8C00; margin-top: 0;">項目描述</h3>
+            <p style="background: #FFF5EE; padding: 15px; border-radius: 12px; border: 1px dashed #FF8C00; color: #333; min-height: 100px; line-height: 1.6;">
+                ${r.description || '（沒有填寫描述喔！）'}
+            </p>
+            <p style="font-size: 0.8rem; color: #999; text-align: right; margin-top: 10px;">
+                紀錄日期：${r.created_at}
             </p>
         </div>
     `;
