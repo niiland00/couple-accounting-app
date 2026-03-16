@@ -155,13 +155,7 @@ def search(couple_id, date):
         db.close()
 
 if __name__ == "__main__":
-    # 這裡不要寫死 8000，一定要先抓環境變數
-    # 某些雲端平台如果抓不到 PORT 會報錯，所以我們給它一個預設值 8000
-    port_str = os.environ.get("PORT", "8000")
-    port = int(port_str)
-    
-    print(f"正在啟動程式，監聽 Port: {port}")
-    
-    # host 必須是 0.0.0.0
-    # debug 建議在雲端環境設為 False
+    import os
+    # 確保這行有在裡面，雲端平台一定要靠它
+    port = int(os.environ.get("PORT", 8000))
     app.run(host="0.0.0.0", port=port, debug=False)

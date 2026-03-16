@@ -3,7 +3,7 @@ body {
     font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
     /* 設定橘色底色與背景圖 */
     background-color: #FF8C00; 
-    background-image: url('/static/background(1).png'); 
+    background-image: url('/static/background.png'); 
     background-repeat: repeat; 
     background-attachment: fixed;
     background-size: auto; 
