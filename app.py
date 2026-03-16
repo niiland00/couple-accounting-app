@@ -41,8 +41,8 @@ def service_worker():
 @app.route("/create_couple", methods=["POST"])
 def create_couple():
     code = generate_code()
-    #db = get_db_connection()
-    #cursor = db.cursor(dictionary=True)
+    db = get_db_connection()
+    cursor = db.cursor(dictionary=True)
     try:
         cursor.execute(
             "INSERT INTO couples (couple_code) VALUES (%s)",
@@ -58,8 +58,9 @@ def create_couple():
 @app.route("/add_expense", methods=["POST"])
 def add_expense():
     data = request.json
-    #db = get_db_connection()
-    #cursor = db.cursor(dictionary=True)
+    
+    db = get_db_connection()
+    cursor = db.cursor(dictionary=True)
     try:
         cursor.execute(
             """
@@ -86,8 +87,8 @@ def add_expense():
 
 @app.route("/expenses/<couple_id>")
 def expenses(couple_id):
-    #db = get_db_connection()
-    #cursor = db.cursor(dictionary=True)
+    db = get_db_connection()
+    cursor = db.cursor(dictionary=True)
     try:
         cursor.execute("SELECT * FROM records WHERE couple_id=%s ORDER BY created_at DESC", (couple_id,))
         result = cursor.fetchall()
@@ -104,8 +105,8 @@ def expenses(couple_id):
 
 @app.route("/search/<date>")
 def search(date):
-    #db = get_db_connection()
-    #cursor = db.cursor(dictionary=True)
+    db = get_db_connection()
+    cursor = db.cursor(dictionary=True)
     try:
         cursor.execute("SELECT * FROM records WHERE created_at=%s", (date,))
         result = cursor.fetchall()
