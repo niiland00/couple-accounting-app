@@ -177,11 +177,6 @@ function showDetail(index) {
             <div style="background: #FFF5EE; padding: 20px; border-radius: 15px; border: 1px dashed #FF8C00; color: #333; min-height: 120px; line-height: 1.6; font-size: 1.05rem;">
                 ${r.description || '（這筆紀錄沒有填寫描述喔！）'}
             </div>
-            
-            <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee; font-size: 0.85rem; color: #999;">
-                <p>項目名稱：${r.item}</p>
-                <p>紀錄時間：${r.created_at}</p>
-            </div>
         </div>
     `;
 
