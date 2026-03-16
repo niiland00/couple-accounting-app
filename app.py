@@ -13,8 +13,10 @@ CORS(app)
 
 # --- 資料庫連線 (建議改用 try-except 包起來) ---
 def get_db_connection():
+    # 優先讀取雲端環境變數，若無則使用本地預設值
     return mysql.connector.connect(
         host=os.getenv("DB_HOST", "localhost"),
+        port=int(os.getenv("DB_PORT", 3306)), # Aiven 通常是 28888 或其他數字
         user=os.getenv("DB_USER", "root"),
         password=os.getenv("DB_PASS", "Zxcvxc1001##"),
         database=os.getenv("DB_NAME", "couple_accounting")
@@ -91,13 +93,13 @@ def add_expense():
 
 @app.route("/expenses/<couple_id>")
 def expenses(couple_id):
-
-    cursor.execute(
-        "SELECT * FROM records WHERE couple_id=%s",
-        (couple_id,)
-    )
-
-    return jsonify(cursor.fetchall())
+    db = get_db_connection() # 每次請求時建立連線
+    cursor = db.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM records WHERE couple_id=%s", (couple_id,))
+    result = cursor.fetchall()
+    cursor.close()
+    db.close() # 用完記得關閉
+    return jsonify(result)
     
 @app.route("/search/<date>")
 def search(date):
