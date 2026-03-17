@@ -99,7 +99,7 @@ button {
 /* 查詢列 */
 .search-bar {
     display: flex;
-    margin-bottom: 70%;
+    margin-bottom: 100%;
 }
 
 .search-bar input {
