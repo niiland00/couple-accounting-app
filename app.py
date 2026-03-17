@@ -150,6 +150,38 @@ def search(couple_id, date):
     finally:
         cursor.close()
         db.close()
+        
+@app.route("/add_anniversary", methods=["POST"])
+def add_anniversary():
+    data = request.json
+    db = get_db_connection()
+    cursor = db.cursor()
+    try:
+        cursor.execute(
+            "INSERT INTO anniversaries (couple_id, title, date) VALUES (%s, %s, %s)",
+            (data["couple_id"], data["title"], data["date"])
+        )
+        return jsonify({"status": "ok"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
+        db.close()
+
+@app.route("/anniversaries/<couple_id>")
+def get_anniversaries(couple_id):
+    db = get_db_connection()
+    cursor = db.cursor(dictionary=True)
+    try:
+        # 撈取所有紀念日
+        cursor.execute("SELECT * FROM anniversaries WHERE couple_id=%s", (couple_id,))
+        result = cursor.fetchall()
+        for row in result:
+            row['date'] = str(row['date'])
+        return jsonify(result)
+    finally:
+        cursor.close()
+        db.close()
 
 if __name__ == "__main__":
     import os

@@ -83,21 +83,25 @@
         </div>
     </div>
 
-    <div class="input-card future-features">
-        <div class="feature-item">
-            <h3 style="margin-top:0; color:#E65100;">💰 存錢目標</h3>
-            <p style="font-size: 0.85rem; color: #888;">設定你們的夢想基金（開發中）</p>
-            <button class="primary-btn disabled-style">設定存錢目標 ❯</button>
-        </div>
-        <hr style="border: 0; border-top: 1px dashed #ddd; margin: 20px 0;">
-        <div class="feature-item">
-            <h3 style="margin-top:0; color:#E65100;">📅 紀念日倒數</h3>
-            <div id="anniversary-display" style="margin-bottom: 10px; font-weight: bold;">
-                下個紀念日：<span style="color: #FF8C00;">尚未設定</span>
-            </div>
-            <button class="primary-btn" onclick="alert('紀念日功能即將上線！')">設定紀念日 ❯</button>
-        </div>
+    <div class="input-card">
+    <div class="feature-item">
+        <h3 style="margin-top:0; color:#E65100;">💰 存錢目標</h3>
+        <button class="primary-btn disabled-style">***功能開發中*** ❯</button>
     </div>
+    
+    <hr style="border: 0; border-top: 1px dashed #ddd; margin: 20px 0;">
+
+    <div class="feature-item">
+        <h3 style="margin-top:0; color:#E65100;">📅 紀念日倒數</h3>
+        <div class="input-group" style="margin-bottom: 10px;">
+            <input id="anni-title" placeholder="紀念日名稱">
+            <input id="anni-date" type="date">
+            <button class="primary-btn" onclick="addAnniversary()" style="padding: 10px;">新增紀念日</button>
+        </div>
+        <div id="anniversary-list" style="margin-top: 15px;">
+            </div>
+    </div>
+	</div>
 	</div><script src="/static/app.js"></script>
 <script>
 // 預設日期為今天

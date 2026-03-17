@@ -3,7 +3,7 @@ body {
     font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
     /* 設定橘色底色與背景圖 */
     background-color: #FF8C00; 
-    background-image: url('/static/background.png'); 
+    background-image: url('/static/background(2).png'); 
     background-repeat: repeat; 
     background-attachment: fixed;
     background-size: auto; 
@@ -100,7 +100,7 @@ button {
 /* 修正搜尋欄寬度與排版 */
 .section-title {
     margin-bottom: 15px;
-    color: #E65100;
+    color: #000000;
     font-size: 1.5rem;
 }
 
@@ -272,4 +272,10 @@ button {
 
 .feature-item {
     padding: 5px 0;
+}
+
+#anniversary-list {
+    max-height: 200px;
+    overflow-y: auto;
+    padding-right: 5px;
 }

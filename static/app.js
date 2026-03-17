@@ -240,3 +240,63 @@ function backToList() {
     document.getElementById("detail-view").style.display = "none";
     document.getElementById("stats-view").style.display = "none";
 }
+
+// 在 loadRecords() 執行時，順便載入紀念日
+const originalLoadRecords = loadRecords;
+loadRecords = function() {
+    originalLoadRecords();
+    loadAnniversaries();
+};
+
+async function addAnniversary() {
+    const coupleId = localStorage.getItem('coupleID');
+    const title = document.getElementById('anni-title').value;
+    const date = document.getElementById('anni-date').value;
+
+    if (!title || !date) return alert("請填寫名稱與日期");
+
+    const res = await fetch("/add_anniversary", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ couple_id: coupleId, title, date })
+    });
+
+    if (res.ok) {
+        document.getElementById('anni-title').value = "";
+        loadAnniversaries();
+    }
+}
+
+async function loadAnniversaries() {
+    const coupleId = localStorage.getItem('coupleID');
+    const res = await fetch(`/anniversaries/${coupleId}`);
+    const data = await res.json();
+    
+    const listDiv = document.getElementById('anniversary-list');
+    listDiv.innerHTML = "";
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // 計算倒數天數並排序
+    const sorted = data.map(item => {
+        const targetDate = new Date(item.date);
+        const diffTime = targetDate - today;
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        return { ...item, diffDays };
+    }).sort((a, b) => a.diffDays - b.diffDays); // 依天數排序
+
+    sorted.forEach(item => {
+        const statusText = item.diffDays > 0 ? `還有 ${item.diffDays} 天` : 
+                           item.diffDays === 0 ? "就是今天！🎉" : 
+                           `已過 ${Math.abs(item.diffDays)} 天`;
+        
+        const div = document.createElement('div');
+        div.style = "background: #fff; padding: 10px; border-radius: 10px; margin-bottom: 8px; border-left: 4px solid #FF8C00; display: flex; justify-content: space-between; font-size: 0.9rem;";
+        div.innerHTML = `
+            <span><strong>${item.title}</strong> (${item.date})</span>
+            <span style="color: #E65100; font-weight: bold;">${statusText}</span>
+        `;
+        listDiv.appendChild(div);
+    });
+}
