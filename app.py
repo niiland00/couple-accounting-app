@@ -198,7 +198,9 @@ def delete_anniversary(anniversary_id):
         db.close()
 
 if __name__ == "__main__":
-    import os
-    # 確保這行有在裡面，雲端平台一定要靠它
-    port = int(os.environ.get("PORT", 8000))
+    # Render 會自動分配一個 PORT 變數給我們
+    # 這裡我們優先取用 os.environ.get("PORT")
+    port = int(os.environ.get("PORT", 10000))
+    
+    # 必須監聽 0.0.0.0 才能讓外部連進來
     app.run(host="0.0.0.0", port=port, debug=False)
