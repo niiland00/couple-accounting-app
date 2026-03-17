@@ -121,16 +121,19 @@ function changeMonth(step) {
     loadRecords();
 }
 
+// 搜尋功能優化
 function search() {
     const coupleId = localStorage.getItem('coupleID');
     let date = document.getElementById("searchDate").value;
     
     if (!date) return loadRecords();
 
+    // 搜尋時保持介面整潔，隱藏月份選擇器的過濾邏輯感
     fetch(API + "/search/" + coupleId + "/" + date)
     .then(r => r.json())
     .then(data => {
-        // 搜尋時不考慮月份過濾，直接顯示結果
+        // 更新當前文字提示
+        document.getElementById('current-month-display').innerText = `搜尋日期：${date}`;
         renderUI(data); 
     })
     .catch(err => console.error("搜尋發生錯誤:", err));

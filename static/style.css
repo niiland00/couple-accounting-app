@@ -97,12 +97,21 @@ button {
 }
 
 /* 查詢列 */
-.search-bar {
-    display: flex;
-    margin-bottom: 100%;
+/* 修正搜尋欄寬度與排版 */
+.section-title {
+    margin-bottom: 15px;
+    color: #E65100;
+    font-size: 1.5rem;
 }
 
-.search-bar input {
+.search-bar-full {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    margin-bottom: 15px; /* 縮小與下方月份選擇器的間距 */
+}
+
+.search-bar-full input {
     flex-grow: 1;
 }
 
@@ -209,13 +218,13 @@ button {
     margin-right: 8px;
 }
 
-
 .list-header {
     display: flex;
-    flex-direction: column; 
-    align-items: flex-start; 
+    flex-direction: row; /* 改回橫向 */
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
     gap: 10px;
-    margin-bottom: 20px;
 }
 
 /* 月份切換器文字按鈕 */
@@ -230,8 +239,37 @@ button {
     color: #E65100;
 }
 
+/* 修正月份選擇器樣式 */
+.month-seletor {
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    margin-bottom: 15px; 
+    color: #FF8C00; 
+    font-weight: bold;
+}
+
+.month-seletor span {
+    margin: 0 20px; 
+    font-size: 1.1rem;
+}
+
 /* 確保統計圖表容器大小適中 */
 #payerChart {
     max-width: 100%;
     margin: 0 auto;
+}
+
+/* 針對開發中功能的樣式 */
+.disabled-style {
+    background: #ccc !important;
+    cursor: not-allowed;
+}
+
+.future-features {
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.feature-item {
+    padding: 5px 0;
 }
