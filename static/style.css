@@ -1,57 +1,58 @@
 /* 全域設定 */
 /* 全域設定 */
+/* 1. 移除 body 原有的背景圖，改用純色 */
 body {
     font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
-    
-    /* --- 1. 第一層背景（原始圖片） --- */
-    background-color: #FF8C00; /* 橘色底色 */
-    background-image: url('/static/background.png'); 
-    background-repeat: repeat; 
-    background-attachment: fixed;
-    background-size: auto; 
-    
+    background-color: #FF8C00; 
     margin: 0;
     padding: 20px;
     display: flex;
     justify-content: center;
     min-height: 100vh;
     color: #333333;
-    
-    /* CRITICAL: 為了讓偽元素絕對定位，本體必須是 relative */
-    position: relative; 
+    position: relative;
 }
 
-/* --- 2. 建立偽元素作為第二層背景 --- */
-body::after {
-    content: ""; /* 必須有 content 屬性 */
-    
-    /* --- 3. 設定為絕對定位，鋪滿整個 body --- */
-    position: absolute;
+/* 2. 建立一個專門放背景的層，避免干擾 body 渲染 */
+.bg-layer {
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    
-    /* --- 4. 套用相同的背景圖片設定 --- */
-    background-image: url('/static/background.png');
-    background-repeat: repeat;
-    background-attachment: fixed; /* 保持滾動時固定，與 body 一致 */
-    background-size: auto;
-    
-    /* --- 5. 垂直反轉（鏡像） --- */
-    transform: scaleY(-1); /* 核心代碼：垂直翻轉 */
-    
-    /* --- 6. 調整層級與透明度 --- */
-    z-index: -1; /* 確保背景在內容（container）後面 */
-    opacity: 0.5; /* 選項：調整第二層的透明度，讓疊加效果更明顯，可依需求移除 */
+    z-index: -1;
+    pointer-events: none; /* 讓點擊穿透，不影響按鈕 */
 }
 
-/* 確保內容容器在偽元素之上 */
+/* 3. 第一層背景（正常） */
+.bg-normal {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: url('/static/background.png');
+    background-repeat: repeat;
+    background-size: auto;
+}
+
+/* 4. 第二層背景（垂直反轉 + 疊加） */
+.bg-flipped {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: url('/static/background.png');
+    background-repeat: repeat;
+    background-size: auto;
+    transform: scaleY(-1); /* 垂直翻轉 */
+    opacity: 0.4; /* 透明度調低一點，疊加效果更美 */
+    mix-blend-mode: multiply; /* 讓兩張圖完美融合，不想要可以刪除這行 */
+}
+
+/* 確保內容容器在最上方 */
 .container {
     width: 100%;
     max-width: 450px;
-    position: relative; /* 確保 z-index 生效 */
-    z-index: 1; /* 讓內容浮在所有背景之上 */
+    position: relative;
+    z-index: 10;
 }
 
 h1 {
