@@ -274,8 +274,15 @@ button {
     padding: 5px 0;
 }
 
+/* 讓列表高度固定且可以滾動，避免紀念日太多撐開頁面 */
 #anniversary-list {
-    max-height: 200px;
+    max-height: 250px;
     overflow-y: auto;
-    padding-right: 5px;
+    padding: 5px;
 }
+
+.anni-item button:hover {
+    color: #ff4d4d !important; /* 變成紅色提示刪除 */
+    transform: scale(1.2);
+}
+

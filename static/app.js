@@ -267,8 +267,11 @@ async function addAnniversary() {
     }
 }
 
+// 修改後的載入紀念日函數
 async function loadAnniversaries() {
     const coupleId = localStorage.getItem('coupleID');
+    if (!coupleId) return;
+
     const res = await fetch(`/anniversaries/${coupleId}`);
     const data = await res.json();
     
@@ -278,13 +281,13 @@ async function loadAnniversaries() {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // 計算倒數天數並排序
+    // 計算並排序
     const sorted = data.map(item => {
         const targetDate = new Date(item.date);
         const diffTime = targetDate - today;
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         return { ...item, diffDays };
-    }).sort((a, b) => a.diffDays - b.diffDays); // 依天數排序
+    }).sort((a, b) => a.diffDays - b.diffDays);
 
     sorted.forEach(item => {
         const statusText = item.diffDays > 0 ? `還有 ${item.diffDays} 天` : 
@@ -292,11 +295,39 @@ async function loadAnniversaries() {
                            `已過 ${Math.abs(item.diffDays)} 天`;
         
         const div = document.createElement('div');
-        div.style = "background: #fff; padding: 10px; border-radius: 10px; margin-bottom: 8px; border-left: 4px solid #FF8C00; display: flex; justify-content: space-between; font-size: 0.9rem;";
+        // 加入了一些樣式讓刪除按鈕靠右
+        div.className = "anni-item";
+        div.style = "background: #fff; padding: 10px; border-radius: 10px; margin-bottom: 8px; border-left: 4px solid #FF8C00; display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; box-shadow: 0 2px 5px rgba(0,0,0,0.05);";
+        
         div.innerHTML = `
-            <span><strong>${item.title}</strong> (${item.date})</span>
-            <span style="color: #E65100; font-weight: bold;">${statusText}</span>
+            <div style="flex-grow: 1;">
+                <strong>${item.title}</strong> <br>
+                <span style="font-size: 0.75rem; color: #888;">${item.date}</span>
+            </div>
+            <div style="text-align: right; margin-right: 10px;">
+                <span style="color: #E65100; font-weight: bold; display: block;">${statusText}</span>
+            </div>
+            <button onclick="deleteAnniversary(${item.id})" style="background: none; color: #ccc; border: none; font-size: 1.2rem; cursor: pointer; padding: 0 5px;">×</button>
         `;
         listDiv.appendChild(div);
     });
+}
+
+// 新增刪除功能
+async function deleteAnniversary(id) {
+    if (!confirm("確定要刪除這個紀念日嗎？")) return;
+
+    try {
+        const res = await fetch(`/delete_anniversary/${id}`, {
+            method: "DELETE"
+        });
+        const result = await res.json();
+        if (result.status === "ok") {
+            loadAnniversaries(); // 重新整理列表
+        } else {
+            alert("刪除失敗：" + result.error);
+        }
+    } catch (err) {
+        alert("連線伺服器失敗");
+    }
 }

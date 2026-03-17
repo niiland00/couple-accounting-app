@@ -182,6 +182,20 @@ def get_anniversaries(couple_id):
     finally:
         cursor.close()
         db.close()
+        
+@app.route("/delete_anniversary/<int:anniversary_id>", methods=["DELETE"])
+def delete_anniversary(anniversary_id):
+    db = get_db_connection()
+    cursor = db.cursor()
+    try:
+        # 執行刪除指令
+        cursor.execute("DELETE FROM anniversaries WHERE id = %s", (anniversary_id,))
+        return jsonify({"status": "ok", "message": "刪除成功"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
+        db.close()
 
 if __name__ == "__main__":
     import os
