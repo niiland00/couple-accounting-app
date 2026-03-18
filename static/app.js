@@ -285,7 +285,7 @@ async function loadAnniversaries() {
     const sorted = data.map(item => {
         const targetDate = new Date(item.date);
         const diffTime = targetDate - today;
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        const diffDays = Math.ceil((diffTime / (1000 * 60 * 60 * 24))-1);
         return { ...item, diffDays };
     }).sort((a, b) => a.diffDays - b.diffDays);
 
