@@ -11,19 +11,21 @@ CORS(app)
 # --- 資料庫連線設定 (優化版) ---
 def get_db_connection():
     try:
-        # 優先從環境變數抓取，這能解決連到 localhost 的問題
+        # 確保從環境變數讀取，否則 Render 會連不到 Aiven
         conn = mysql.connector.connect(
-            host=os.getenv("DB_HOST", "mysql-1-couple-accounting-app.f.aivencloud.com"),
+            host=os.getenv("DB_HOST"),
             port=int(os.getenv("DB_PORT", 15967)),
-            user=os.getenv("DB_USER", "avnadmin"),
-            password=os.getenv("DB_PASS", "你的新密碼"), # 建議在 Render 環境變數設定
-            database=os.getenv("DB_NAME", "couple_accounting"),
+            user=os.getenv("DB_USER"),
+            password=os.getenv("DB_PASS"), 
+            database=os.getenv("DB_NAME"),
             autocommit=True,
-            ssl_disabled=False # Aiven 強制要求 SSL
+            # Aiven 建議加上這行來確保 SSL 啟動
+            ssl_ca=None, # 如果有下載 Aiven 的 ca.pem，請指向該路徑
+            ssl_verify_cert=False # 在沒設定 ca.pem 時，暫時跳過驗證以確保能連上
         )
         return conn
     except Exception as e:
-        print(f"❌ 資料庫連線失敗原因: {e}")
+        print(f"❌ 資料庫連線失敗: {e}")
         return None
 
 # --- API 路由 (加上安全檢查) ---
