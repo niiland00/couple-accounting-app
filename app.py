@@ -18,7 +18,7 @@ def get_db_connection():
         port = int(os.getenv("DB_PORT", 15967))
         user = os.getenv("DB_USER", "avnadmin")
         password = os.getenv("DB_PASS", "你的新密碼") # 建議這裡一定要進 Render 設定環境變數
-        database = os.getenv("DB_NAME", "defaultdb")
+        database = os.getenv("DB_NAME", "couple_accounting")
 
         conn = mysql.connector.connect(
             host=host,
