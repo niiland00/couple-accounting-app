@@ -13,24 +13,20 @@ CORS(app)
 # --- 資料庫連線設定 ---
 def get_db_connection():
     try:
-        # 優先從環境變數抓，抓不到才用你 Aiven 的網址當預設
-        host = os.getenv("DB_HOST", "mysql-1-couple-accounting-app.f.aivencloud.com")
-        port = int(os.getenv("DB_PORT", 15967))
-        user = os.getenv("DB_USER", "avnadmin")
-        password = os.getenv("DB_PASS", "你的新密碼") # 建議這裡一定要進 Render 設定環境變數
-        database = os.getenv("DB_NAME", "couple_accounting")
-
+        # 確保這些變數在 Render 的 Environment Variables 都有設定
+        # 如果沒設定，這組預設值必須是 Aiven 的正確資訊
         conn = mysql.connector.connect(
-            host=host,
-            port=port,
-            user=user,
-            password=password,
-            database=database,
+            host=os.getenv("DB_HOST", "mysql-1-couple-accounting-app.f.aivencloud.com"),
+            port=int(os.getenv("DB_PORT", 15967)),
+            user=os.getenv("DB_USER", "avnadmin"),
+            password=os.getenv("DB_PASS", "你的Aiven新密碼"),
+            database=os.getenv("DB_NAME", "couple_accounting"),
             autocommit=True,
-            ssl_disabled=False  # Aiven 必須為 False (即開啟 SSL)
+            ssl_disabled=False # Aiven 強制開啟 SSL
         )
         return conn
     except Exception as e:
+        # 重要：這裡只印出錯誤，不要讓整個程式 Crash
         print(f"❌ 資料庫連線失敗: {e}")
         return None
 
